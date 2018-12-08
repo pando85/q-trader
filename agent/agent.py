@@ -9,13 +9,14 @@ import random
 from collections import deque
 
 class Agent:
-	def __init__(self, state_size, is_eval=False, model_name=""):
+  def __init__(self, state_size, tensorboard, is_eval=False, model_name=""):
 		self.state_size = state_size # normalized previous days
 		self.action_size = 3 # sit, buy, sell
 		self.memory = deque(maxlen=1000)
 		self.inventory = []
 		self.model_name = model_name
 		self.is_eval = is_eval
+    self.tensorboard = tensorboard
 
 		self.gamma = 0.95
 		self.epsilon = 1.0
@@ -47,6 +48,8 @@ class Agent:
 		for i in range(l - batch_size + 1, l):
 			mini_batch.append(self.memory[i])
 
+    logged = False
+
 		for state, action, reward, next_state, done in mini_batch:
 			target = reward
 			if not done:
@@ -54,7 +57,12 @@ class Agent:
 
 			target_f = self.model.predict(state)
 			target_f[0][action] = target
-			self.model.fit(state, target_f, epochs=1, verbose=0)
+      if logged:
+        self.model.fit(state, target_f, epochs=1, verbose=0)
+      else:
+        self.model.fit(state, target_f, epochs=1, verbose=0,
+                       callbacks=[self.tensorboard])
+        logged = True
 
 		if self.epsilon > self.epsilon_min:
 			self.epsilon *= self.epsilon_decay 
