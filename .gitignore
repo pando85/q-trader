@@ -1,0 +1,4 @@
+.idea/*
+q-trader-env/*
+models/*
+__pycache__
