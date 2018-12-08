@@ -1,4 +1,6 @@
 .idea/*
 q-trader-env/*
-models/*
 __pycache__
+
+models/*
+logs/*
