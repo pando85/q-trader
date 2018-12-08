@@ -1,4 +1,5 @@
 import keras
+import matplotlib.pyplot as plt
 from keras.models import load_model
 
 from agent.agent import Agent
@@ -22,6 +23,9 @@ state = getState(data, 0, window_size + 1)
 total_profit = 0
 agent.inventory = []
 
+ts_buy = []
+ts_sell = []
+
 for t in range(l):
 	action = agent.act(state)
 
@@ -32,6 +36,7 @@ for t in range(l):
 	if action == 1: # buy
 		agent.inventory.append(data[t])
 		print("Buy: " + formatPrice(data[t]))
+		ts_buy.append(t)
 
 	elif action == 2 and len(agent.inventory) > 0: # sell
 		bought_price = agent.inventory.pop(0)
@@ -39,6 +44,10 @@ for t in range(l):
 		total_profit += data[t] - bought_price
 		print("Sell: " + formatPrice(data[t]) + " | Profit: " +
 					formatPrice(data[t] - bought_price))
+		ts_sell.append(t)
+
+	else:
+		print("Sit")
 
 	done = True if t == l - 1 else False
 	agent.memory.append((state, action, reward, next_state, done))
@@ -48,3 +57,14 @@ for t in range(l):
 		print("--------------------------------")
 		print(stock_name + " Total Profit: " + formatPrice(total_profit))
 		print("--------------------------------")
+
+plt.figure()
+data = np.array(data)
+ts = np.arange(l).astype(int)
+ts_buy = np.array(ts_buy).astype(int)
+ts_sell = np.array(ts_sell).astype(int)
+plt.plot(ts, data[ts])
+plt.scatter(ts_buy, data[ts_buy], c="r", label="Buy")
+plt.scatter(ts_sell, data[ts_sell], c="b", label="Sell")
+plt.legend()
+plt.show()
