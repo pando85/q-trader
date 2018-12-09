@@ -5,7 +5,6 @@ class SimpleTradeEnv(object):
     self.data = getStockDataVec(stock_name)
     self.window_size = window_size
     self.agent = agent
-    self.total_profit = 0
 
   def step(self, action):
     # 0: Sit
@@ -36,11 +35,12 @@ class SimpleTradeEnv(object):
       else:
         reward = 0 # try to sell, but con't do
 
-    done = True if self.t == len(self.data) - 1 else False
+    done = True if self.t == len(self.data) - 2 else False
     self.t += 1
 
     return next_state, reward, done, {}
 
   def reset(self):
     self.t = 0
-    return getState(self.data, self.t + 1, self.window_size + 1)
+    self.total_profit = 0
+    return getState(self.data, self.t, self.window_size + 1)
