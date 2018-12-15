@@ -2,3 +2,4 @@
 q-trader-env/*
 models/*
 __pycache__
+logs/*
