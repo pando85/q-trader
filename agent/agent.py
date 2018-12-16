@@ -1,7 +1,7 @@
 from keras.models import Sequential
 from keras.models import load_model
 from keras.layers import Dense
-from keras.optimizers import Adam
+from keras.optimizers import Adam, SGD
 
 import numpy as np
 import random
@@ -30,7 +30,8 @@ class Agent:
     model.add(Dense(units=32, activation="relu"))
     model.add(Dense(units=8, activation="relu"))
     model.add(Dense(self.action_size, activation="linear"))
-    model.compile(loss="mse", optimizer=Adam(lr=0.001))
+    # model.compile(loss="mse", optimizer=Adam(lr=0.0001))
+    model.compile(loss="mse", optimizer=SGD(lr=0.0001))
 
     return model
 
@@ -50,7 +51,7 @@ class Agent:
     #   mini_batch.append(self.memory.popleft())
 
     # Random sampling
-    mini_batch = random.sample(list(self.memory), batch_size)
+    mini_batch = random.sample(list(self.memory), min(batch_size * 10, len(self.memory)))
 
     states, targets = [], []
     for state, action, reward, next_state, done in mini_batch:
@@ -64,7 +65,8 @@ class Agent:
       states.append(state)
       targets.append(target_f)
 
-    self.model.fit(np.vstack(states), np.vstack(targets), epochs=1, verbose=0)
+    self.model.fit(np.vstack(states), np.vstack(targets), epochs=1, verbose=0,
+                   batch_size=batch_size)
 
     if self.epsilon > self.epsilon_min:
       self.epsilon *= self.epsilon_decay
