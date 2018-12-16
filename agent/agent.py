@@ -1,4 +1,3 @@
-import keras
 from keras.models import Sequential
 from keras.models import load_model
 from keras.layers import Dense
@@ -18,7 +17,7 @@ class Agent:
     self.model_name = model_name
     self.is_eval = is_eval
 
-    self.gamma = 0.95
+    self.gamma = 0.995
     self.epsilon = 1.0
     self.epsilon_min = 0.01
     self.epsilon_decay = 0.995
@@ -44,9 +43,14 @@ class Agent:
 
   def expReplay(self, batch_size):
     mini_batch = []
-    l = len(self.memory)
-    for i in range(l - batch_size + 1, l):
-      mini_batch.append(self.memory.popleft())
+
+    # Sequential sampling
+    # l = len(self.memory)
+    # for i in range(l - batch_size + 1, l):
+    #   mini_batch.append(self.memory.popleft())
+
+    # Random sampling
+    mini_batch = random.sample(list(self.memory), batch_size)
 
     states, targets = [], []
     for state, action, reward, next_state, done in mini_batch:
