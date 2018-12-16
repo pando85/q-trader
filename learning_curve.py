@@ -1,6 +1,7 @@
 import os, re, sys
 import numpy as np
 import pandas as pd
+import keras
 from keras.models import load_model
 from tabulate import tabulate
 from agent.agent import Agent
@@ -34,6 +35,8 @@ def eval_model(stock_name, model_name):
   print("--------------------------------")
   print("Total Profit: " + formatPrice(env.total_profit))
   print("--------------------------------")
+
+  keras.backend.clear_session()
 
   return env.total_profit
 
