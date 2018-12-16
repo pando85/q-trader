@@ -26,12 +26,12 @@ class Agent:
 
   def _model(self):
     model = Sequential()
-    model.add(Dense(units=64, input_dim=self.state_size, activation="relu"))
+    model.add(Dense(units=64, input_dim=(self.state_size + 1), activation="relu"))
     model.add(Dense(units=32, activation="relu"))
     model.add(Dense(units=8, activation="relu"))
     model.add(Dense(self.action_size, activation="linear"))
     # model.compile(loss="mse", optimizer=Adam(lr=0.0001))
-    model.compile(loss="mse", optimizer=SGD(lr=0.0001))
+    model.compile(loss="mse", optimizer=SGD(lr=0.001))
 
     return model
 
@@ -41,6 +41,10 @@ class Agent:
 
     options = self.model.predict(state)
     return np.argmax(options[0])
+
+  def modify_state(self, state):
+    state = np.hstack((state, [[len(self.inventory)]]))
+    return state
 
   def expReplay(self, batch_size):
     mini_batch = []

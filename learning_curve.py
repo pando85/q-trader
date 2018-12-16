@@ -17,7 +17,7 @@ def get_window_size(model_name):
 
 def eval_model(stock_name, model_name):
   # Agent
-  window_size = get_window_size(model_name)
+  window_size = get_window_size(model_name) - 1
   agent = Agent(window_size, True, model_name)
 
   # Environment
