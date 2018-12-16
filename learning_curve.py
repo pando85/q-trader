@@ -5,6 +5,7 @@ from keras.models import load_model
 from tabulate import tabulate
 from agent.agent import Agent
 from environment import SimpleTradeEnv
+from functions import formatPrice
 
 def get_window_size(model_name):
   """TODO: Refactor this code wrt window_size"""
@@ -28,8 +29,11 @@ def eval_model(stock_name, model_name):
   while not done:
     action = agent.act(state)
     next_state, reward, done, _ = env.step(action)
-    agent.memory.append((state, action, reward, next_state, done))
     state = next_state
+
+  print("--------------------------------")
+  print("Total Profit: " + formatPrice(env.total_profit))
+  print("--------------------------------")
 
   return env.total_profit
 
