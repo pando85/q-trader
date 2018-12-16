@@ -22,16 +22,17 @@ class SimpleTradeEnv(object):
     elif action == 1:
       reward = 0
       self.agent.inventory.append(self.data[self.t])
+      self.total_profit -= self.data[self.t]
       print("Buy: " + formatPrice(self.data[self.t]))
 
     else:
       if len(self.agent.inventory) > 0:
         bought_price = self.agent.inventory.pop(0)
-        profit = self.data[self.t] - bought_price
-        reward = max(profit, 0)
-        self.total_profit += profit
+        reward = self.data[self.t] - bought_price
+        # reward = max(self.data[self.t] - bought_price, 0)
+        self.total_profit += self.data[self.t]
         print("Sell: " + formatPrice(self.data[self.t]) +
-              " | Profit: " + formatPrice(profit))
+              " | Profit: " + formatPrice(reward))
       else:
         reward = 0 # try to sell, but con't do
 
