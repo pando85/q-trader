@@ -36,7 +36,7 @@ class SimpleTradeEnv(object):
     elif action == 1:
       reward = 0
       self.agent.inventory.append(self.data[self.t])
-      if self.print_trase:
+      if self.print_trade:
         print("Buy: " + formatPrice(self.data[self.t]))
 
     else:
