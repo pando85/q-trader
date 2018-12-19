@@ -1,3 +1,6 @@
 stock_name   : ^GSPC
 window_size  : 10
 episode_count: 500
+result_dir   : ./models/config
+
+batch_size: 32

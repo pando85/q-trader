@@ -11,7 +11,8 @@ with open(sys.argv[1]) as f:
 stock_name = config["stock_name"]
 window_size = config["window_size"]
 episode_count = config["episode_count"]
-batch_size = 32
+result_dir = config["result_dir"]
+batch_size = config["batch_size"]
 agent = Agent(window_size)
 
 # Environment
@@ -41,4 +42,4 @@ for e in range(episode_count + 1):
     agent.expReplay(batch_size)
 
   if e % 10 == 0:
-    agent.model.save("models/model_ep" + str(e))
+    agent.model.save(result_dir + "/model_ep" + str(e))
