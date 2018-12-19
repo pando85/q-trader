@@ -1,15 +1,16 @@
 from agent.agent import Agent
 from functions import *
 import sys
+from ruamel.yaml import YAML
 from environment import SimpleTradeEnv
 
-print(sys.argv)
+with open(sys.argv[1]) as f:
+  yaml = YAML()
+  config = yaml.load(f)
 
-if len(sys.argv) != 4:
-  print("Usage: python train.py [stock] [window] [episodes]")
-
-stock_name, window_size, episode_count = sys.argv[1], int(sys.argv[2]), int(
-  sys.argv[3])
+stock_name = config["stock_name"]
+window_size = config["window_size"]
+episode_count = config["episode_count"]
 batch_size = 32
 agent = Agent(window_size)
 
