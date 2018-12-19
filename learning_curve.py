@@ -47,7 +47,7 @@ def get_num_ep(model_name):
 
 def main(config, stock_name):
   result_dir = config["result_dir"]
-  model_names = os.listdir(result_dir)
+  model_names = [f for f in os.listdir(result_dir) if f.startswith("model_ep")]
 
   tprofits = []
 
