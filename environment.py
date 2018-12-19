@@ -14,11 +14,13 @@ def getState(data, t, n, agent):
 
 
 class SimpleTradeEnv(object):
-  def __init__(self, stock_name, window_size, agent, print_trade=True):
+  def __init__(self, stock_name, window_size, agent,
+               reward_for_buy=-1, print_trade=True):
     self.data = getStockDataVec(stock_name)
     self.window_size = window_size
     self.agent = agent
     self.print_trade = print_trade
+    self.reward_for_buy = reward_for_buy
 
   def step(self, action):
     # 0: Sit
@@ -26,15 +28,12 @@ class SimpleTradeEnv(object):
     # 2: Sell
     assert(action in (0, 1, 2))
 
-    # State transition
-    next_state = getState(self.data, self.t + 1, self.window_size + 1, self.agent)
-
     # Reward
     if action == 0:
       reward = 0
 
     elif action == 1:
-      reward = 0
+      reward = self.reward_for_buy
       self.agent.inventory.append(self.data[self.t])
       if self.print_trade:
         print("Buy: " + formatPrice(self.data[self.t]))
@@ -52,6 +51,10 @@ class SimpleTradeEnv(object):
         if self.print_trade:
           print("Sell: not possible")
         reward = -10 # try to sell, but con't do, penalty
+
+    # State transition
+    next_state = getState(self.data, self.t + 1, self.window_size + 1,
+                          self.agent)
 
     done = True if self.t == len(self.data) - 2 else False
     self.t += 1
