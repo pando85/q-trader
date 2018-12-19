@@ -10,7 +10,7 @@ from collections import deque
 
 class Agent:
   def __init__(self, state_size, is_eval=False, model_name="", result_dir="", gamma=0.95,
-               learning_rate=0.001):
+               learning_rate=0.001, optimizer="Adam"):
     self.state_size = state_size  # normalized previous days
     self.action_size = 3  # sit, buy, sell
     self.memory = deque(maxlen=1000)
@@ -23,6 +23,7 @@ class Agent:
     self.epsilon_min = 0.01
     self.epsilon_decay = 0.995
     self.learning_rate = learning_rate
+    self.optimizer = optimizer
 
     self.model = load_model(result_dir + "/" + model_name) if is_eval else self._model()
 
@@ -32,8 +33,13 @@ class Agent:
     model.add(Dense(units=32, activation="relu"))
     model.add(Dense(units=8, activation="relu"))
     model.add(Dense(self.action_size, activation="linear"))
-    # model.compile(loss="mse", optimizer=Adam(lr=self.learning_rate))
-    model.compile(loss="mse", optimizer=SGD(lr=self.learning_rate))
+
+    if self.optimizer == "Adam":
+      model.compile(loss="mse", optimizer=Adam(lr=self.learning_rate))
+    elif self.optimizer == "SGD":
+      model.compile(loss="mse", optimizer=SGD(lr=self.learning_rate))
+    else:
+      print("Unknown optimizer: {}".format(self.optimizer))
 
     return model
 

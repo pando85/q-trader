@@ -16,7 +16,8 @@ batch_size = config["batch_size"]
 
 agent = Agent(window_size,
               learning_rate=config["learning_rate"],
-              gamma=config["gamma"])
+              gamma=config["gamma"],
+              optimizer=config["optimizer"])
 
 # Environment
 env = SimpleTradeEnv(stock_name, window_size, agent,
