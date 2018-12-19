@@ -14,10 +14,11 @@ def getState(data, t, n, agent):
 
 
 class SimpleTradeEnv(object):
-  def __init__(self, stock_name, window_size, agent):
+  def __init__(self, stock_name, window_size, agent, print_trade=True):
     self.data = getStockDataVec(stock_name)
     self.window_size = window_size
     self.agent = agent
+    self.print_trade = print_trade
 
   def step(self, action):
     # 0: Sit
@@ -35,19 +36,22 @@ class SimpleTradeEnv(object):
     elif action == 1:
       reward = 0
       self.agent.inventory.append(self.data[self.t])
-      self.total_profit -= self.data[self.t]
-      print("Buy: " + formatPrice(self.data[self.t]))
+      if self.print_trase:
+        print("Buy: " + formatPrice(self.data[self.t]))
 
     else:
       if len(self.agent.inventory) > 0:
         bought_price = self.agent.inventory.pop(0)
-        reward = self.data[self.t] - bought_price
-        # reward = max(self.data[self.t] - bought_price, 0)
-        self.total_profit += self.data[self.t]
-        print("Sell: " + formatPrice(self.data[self.t]) +
-              " | Profit: " + formatPrice(reward))
+        profit = self.data[self.t] - bought_price
+        self.total_profit += profit
+        reward = max(profit, 0)
+        if self.print_trade:
+          print("Sell: " + formatPrice(self.data[self.t]) +
+                " | Profit: " + formatPrice(reward))
       else:
-        reward = 0 # try to sell, but con't do
+        if self.print_trade:
+          print("Sell: not possible")
+        reward = -10 # try to sell, but con't do, penalty
 
     done = True if self.t == len(self.data) - 2 else False
     self.t += 1
