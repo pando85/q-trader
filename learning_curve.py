@@ -53,6 +53,7 @@ def main(stock_name):
   # Sort model name in ascending order
   eps = [get_num_ep(n) for n in model_names]
   ixs = np.argsort(eps)
+  eps = [eps[ix] for ix in ixs]
   model_names = [model_names[ix] for ix in ixs]
 
   # Evaluate all models
