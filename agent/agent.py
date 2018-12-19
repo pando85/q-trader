@@ -17,7 +17,7 @@ class Agent:
     self.model_name = model_name
     self.is_eval = is_eval
 
-    self.gamma = 0.95
+    self.gamma = 0.995
     self.epsilon = 1.0
     self.epsilon_min = 0.01
     self.epsilon_decay = 0.995
@@ -30,8 +30,8 @@ class Agent:
     model.add(Dense(units=32, activation="relu"))
     model.add(Dense(units=8, activation="relu"))
     model.add(Dense(self.action_size, activation="linear"))
-    model.compile(loss="mse", optimizer=Adam(lr=0.001))
-    # model.compile(loss="mse", optimizer=SGD(lr=0.001))
+    # model.compile(loss="mse", optimizer=Adam(lr=0.001))
+    model.compile(loss="mse", optimizer=SGD(lr=0.001))
 
     return model
 
@@ -59,9 +59,10 @@ class Agent:
     #   mini_batch.append(self.memory.popleft())
 
     # Random sampling
-    subsamples = random.sample(
-      list(self.memory), min(batch_size * 10, len(self.memory))
-    )
+    # subsamples = random.sample(
+    #   list(self.memory), min(batch_size * 5, len(self.memory))
+    # )
+    subsamples = random.sample(list(self.memory), len(self.memory))
 
     states, targets = [], []
     for state, action, reward, next_state, done in subsamples:

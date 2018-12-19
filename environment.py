@@ -15,7 +15,7 @@ def getState(data, t, n, agent):
 
 class SimpleTradeEnv(object):
   def __init__(self, stock_name, window_size, agent,
-               reward_for_buy=-1, print_trade=True):
+               reward_for_buy=-20, print_trade=True):
     self.data = getStockDataVec(stock_name)
     self.window_size = window_size
     self.agent = agent
