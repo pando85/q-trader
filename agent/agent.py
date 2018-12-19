@@ -30,8 +30,8 @@ class Agent:
     model.add(Dense(units=32, activation="relu"))
     model.add(Dense(units=8, activation="relu"))
     model.add(Dense(self.action_size, activation="linear"))
-    # model.compile(loss="mse", optimizer=Adam(lr=0.0001))
-    model.compile(loss="mse", optimizer=SGD(lr=0.001))
+    model.compile(loss="mse", optimizer=Adam(lr=0.001))
+    # model.compile(loss="mse", optimizer=SGD(lr=0.001))
 
     return model
 
@@ -43,7 +43,11 @@ class Agent:
     return np.argmax(options[0])
 
   def modify_state(self, state):
-    state = np.hstack((state, [[len(self.inventory)]]))
+    if len(self.inventory) > 0:
+      state = np.hstack((state, [[1]]))
+    else:
+      state = np.hstack((state, [[0]]))
+
     return state
 
   def expReplay(self, batch_size):
