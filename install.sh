@@ -6,5 +6,6 @@ pip install gym==0.10.9
 pip install matplotlib==3.0.2
 pip install tabulate==0.8.2
 pip install pandas==0.23.4
+pip install ruamel.yaml==0.15.76
 # pip install ruamel-yaml==0.15.76d
 # pip install stable-baselines==2.2.1
