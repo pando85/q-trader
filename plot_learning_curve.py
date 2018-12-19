@@ -10,4 +10,6 @@ ys = df["Total profit"].values
 
 plt.figure()
 plt.plot(xs, ys)
+plt.xlabel("Episodes")
+plt.ylabel("Total profit")
 plt.show()
