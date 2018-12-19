@@ -21,7 +21,7 @@ def eval_model(stock_name, model_name):
   agent = Agent(window_size, True, model_name)
 
   # Environment
-  env = SimpleTradeEnv(stock_name, window_size, agent)
+  env = SimpleTradeEnv(stock_name, window_size, agent, print_trade=False)
 
   # Main loop
   state = env.reset()
@@ -31,10 +31,6 @@ def eval_model(stock_name, model_name):
     action = agent.act(state)
     next_state, reward, done, _ = env.step(action)
     state = next_state
-
-  print("--------------------------------")
-  print("Total Profit: " + formatPrice(env.total_profit))
-  print("--------------------------------")
 
   keras.backend.clear_session()
 
@@ -54,15 +50,17 @@ def main(stock_name):
   eps = []
   tprofits = []
 
-  for model_name in model_names:
-    ep = get_num_ep(model_name)
-    total_profit = eval_model(stock_name, model_name)
-    eps.append(ep)
-    tprofits.append(total_profit)
-
+  # Sort model name in ascending order
+  eps = [get_num_ep(n) for n in model_names]
   ixs = np.argsort(eps)
-  eps = [eps[ix] for ix in ixs]
-  tprofits = [tprofits[ix] for ix in ixs]
+  model_names = [model_names[ix] for ix in ixs]
+
+  # Evaluate all models
+  for model_name in model_names:
+    total_profit = eval_model(stock_name, model_name)
+    print("{:15s} total profit = ".format(model_name) +
+          formatPrice(total_profit))
+    tprofits.append(total_profit)
 
   df = pd.DataFrame({"Episode": eps, "Total profit": tprofits})
   df.to_csv("logs/result.csv", index=False)
