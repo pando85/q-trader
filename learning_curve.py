@@ -3,22 +3,23 @@ import numpy as np
 import pandas as pd
 import keras
 from keras.models import load_model
+from ruamel.yaml import YAML
 from tabulate import tabulate
 from agent.agent import Agent
 from environment import SimpleTradeEnv
 from functions import formatPrice
 
-def get_window_size(model_name):
+def get_window_size(model_name, result_dir):
   """TODO: Refactor this code wrt window_size"""
-  model = load_model("models/" + model_name)
+  model = load_model(result_dir + "/" + model_name)
   window_size = model.layers[0].input.shape.as_list()[1]
 
   return window_size
 
-def eval_model(stock_name, model_name):
+def eval_model(stock_name, model_name, result_dir):
   # Agent
-  window_size = get_window_size(model_name) - 1
-  agent = Agent(window_size, True, model_name)
+  window_size = get_window_size(model_name, result_dir) - 1
+  agent = Agent(window_size, True, model_name, result_dir=result_dir)
 
   # Environment
   env = SimpleTradeEnv(stock_name, window_size, agent, print_trade=False)
@@ -44,10 +45,10 @@ def get_num_ep(model_name):
   else:
     return None
 
-def main(stock_name):
-  model_names = os.listdir("./models")
+def main(config, stock_name):
+  result_dir = config["result_dir"]
+  model_names = os.listdir(result_dir)
 
-  eps = []
   tprofits = []
 
   # Sort model name in ascending order
@@ -58,18 +59,24 @@ def main(stock_name):
 
   # Evaluate all models
   for model_name in model_names:
-    total_profit = eval_model(stock_name, model_name)
+    total_profit = eval_model(stock_name, model_name, result_dir)
     print("{:15s} total profit = ".format(model_name) +
           formatPrice(total_profit))
     tprofits.append(total_profit)
 
   df = pd.DataFrame({"Episode": eps, "Total profit": tprofits})
-  df.to_csv("logs/result.csv", index=False)
+  df.to_csv(result_dir + "/learning_curve_{}.csv".format(stock_name), index=False)
   print(tabulate(df, headers='keys', tablefmt='psql'))
 
 if __name__ == "__main__":
-  if len(sys.argv) != 2:
-    print("Usage: python learning_curve.py [stock]")
+  if len(sys.argv) != 3:
+    print("Usage: python learning_curve.py [config] [stock]")
 
-  stock_name = sys.argv[1]
-  main(stock_name)
+  config_file = sys.argv[1]
+  stock_name = sys.argv[2]
+
+  with open(sys.argv[1]) as f:
+    yaml = YAML()
+    config = yaml.load(f)
+
+  main(config, stock_name)

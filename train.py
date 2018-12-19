@@ -13,10 +13,15 @@ window_size = config["window_size"]
 episode_count = config["episode_count"]
 result_dir = config["result_dir"]
 batch_size = config["batch_size"]
-agent = Agent(window_size)
+
+agent = Agent(window_size,
+              learning_rate=config["learning_rate"],
+              gamma=config["gamma"])
 
 # Environment
-env = SimpleTradeEnv(stock_name, window_size, agent)
+env = SimpleTradeEnv(stock_name, window_size, agent,
+                     clip_reward=config["clip_reward"],
+                     reward_for_buy=config["reward_for_buy"])
 
 # Loop over episodes
 for e in range(episode_count + 1):

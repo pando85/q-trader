@@ -14,13 +14,14 @@ def getState(data, t, n, agent):
 
 
 class SimpleTradeEnv(object):
-  def __init__(self, stock_name, window_size, agent,
+  def __init__(self, stock_name, window_size, agent, clip_reward=True,
                reward_for_buy=-20, print_trade=True):
     self.data = getStockDataVec(stock_name)
     self.window_size = window_size
     self.agent = agent
     self.print_trade = print_trade
     self.reward_for_buy = reward_for_buy
+    self.clip_reward = clip_reward
 
   def step(self, action):
     # 0: Sit
@@ -42,8 +43,9 @@ class SimpleTradeEnv(object):
       if len(self.agent.inventory) > 0:
         bought_price = self.agent.inventory.pop(0)
         profit = self.data[self.t] - bought_price
+        reward = max(profit, 0) if self.clip_reward else profit
         self.total_profit += profit
-        reward = max(profit, 0)
+
         if self.print_trade:
           print("Sell: " + formatPrice(self.data[self.t]) +
                 " | Profit: " + formatPrice(reward))

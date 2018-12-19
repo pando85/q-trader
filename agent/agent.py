@@ -9,7 +9,8 @@ from collections import deque
 
 
 class Agent:
-  def __init__(self, state_size, is_eval=False, model_name=""):
+  def __init__(self, state_size, is_eval=False, model_name="", result_dir="", gamma=0.95,
+               learning_rate=0.001):
     self.state_size = state_size  # normalized previous days
     self.action_size = 3  # sit, buy, sell
     self.memory = deque(maxlen=1000)
@@ -17,12 +18,13 @@ class Agent:
     self.model_name = model_name
     self.is_eval = is_eval
 
-    self.gamma = 0.995
+    self.gamma = gamma
     self.epsilon = 1.0
     self.epsilon_min = 0.01
     self.epsilon_decay = 0.995
+    self.learning_rate = learning_rate
 
-    self.model = load_model("models/" + model_name) if is_eval else self._model()
+    self.model = load_model(result_dir + "/" + model_name) if is_eval else self._model()
 
   def _model(self):
     model = Sequential()
@@ -30,8 +32,8 @@ class Agent:
     model.add(Dense(units=32, activation="relu"))
     model.add(Dense(units=8, activation="relu"))
     model.add(Dense(self.action_size, activation="linear"))
-    # model.compile(loss="mse", optimizer=Adam(lr=0.001))
-    model.compile(loss="mse", optimizer=SGD(lr=0.001))
+    # model.compile(loss="mse", optimizer=Adam(lr=self.learning_rate))
+    model.compile(loss="mse", optimizer=SGD(lr=self.learning_rate))
 
     return model
 
@@ -51,17 +53,6 @@ class Agent:
     return state
 
   def expReplay(self, batch_size):
-    mini_batch = []
-
-    # Sequential sampling
-    # l = len(self.memory)
-    # for i in range(l - batch_size + 1, l):
-    #   mini_batch.append(self.memory.popleft())
-
-    # Random sampling
-    # subsamples = random.sample(
-    #   list(self.memory), min(batch_size * 5, len(self.memory))
-    # )
     subsamples = random.sample(list(self.memory), len(self.memory))
 
     states, targets = [], []
