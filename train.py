@@ -22,7 +22,8 @@ agent = Agent(window_size,
 # Environment
 env = SimpleTradeEnv(stock_name, window_size, agent,
                      clip_reward=config["clip_reward"],
-                     reward_for_buy=config["reward_for_buy"])
+                     reward_for_buy=config["reward_for_buy"],
+                     inventory_max=config["inventory_max"])
 
 # Loop over episodes
 for e in range(episode_count + 1):

@@ -16,10 +16,13 @@ def get_window_size(model_name, result_dir):
 
   return window_size
 
-def eval_model(stock_name, model_name, result_dir):
+def eval_model(config, stock_name, model_name):
   # Agent
-  window_size = get_window_size(model_name, result_dir) - 1
-  agent = Agent(window_size, True, model_name, result_dir=result_dir)
+  agent = Agent(config["window_size"], True, model_name,
+                result_dir=config["result_dir"],
+                learning_rate=None,
+                gamma=config["gamma"],
+                optimizer=None)
 
   # Environment
   env = SimpleTradeEnv(stock_name, window_size, agent, print_trade=False)
@@ -59,7 +62,7 @@ def main(config, stock_name):
 
   # Evaluate all models
   for model_name in model_names:
-    total_profit = eval_model(stock_name, model_name, result_dir)
+    total_profit = eval_model(config, stock_name, model_name)
     print("{:15s} total profit = ".format(model_name) +
           formatPrice(total_profit))
     tprofits.append(total_profit)
