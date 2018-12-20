@@ -43,7 +43,8 @@ class SimpleTradeEnv(object):
           print("Buy: " + formatPrice(self.data[self.t]))
       else:
         reward = 0
-        print("Buy: not possible")
+        if self.print_trade:
+          print("Buy: not possible")
 
     else:
       if len(self.agent.inventory) > 0:
