@@ -17,15 +17,19 @@ def get_window_size(model_name, result_dir):
   return window_size
 
 def eval_model(config, stock_name, model_name):
+  window_size = config["window_size"]
+
   # Agent
-  agent = Agent(config["window_size"], True, model_name,
+  agent = Agent(window_size, True, model_name,
                 result_dir=config["result_dir"],
                 learning_rate=None,
                 gamma=config["gamma"],
                 optimizer=None)
 
   # Environment
-  env = SimpleTradeEnv(stock_name, window_size, agent, print_trade=False)
+  env = SimpleTradeEnv(stock_name, window_size, agent,
+                       print_trade=False,
+                       inventory_max=config["inventory_max"])
 
   # Main loop
   state = env.reset()
