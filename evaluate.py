@@ -1,24 +1,31 @@
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
-from keras.models import load_model
+from ruamel.yaml import YAML
 from agent.agent import Agent
 from environment import SimpleTradeEnv
 from functions import formatPrice
 
-if len(sys.argv) != 3:
-	print("Usage: python evaluate.py [stock] [model]")
+if len(sys.argv) != 4:
+	print("Usage: python evaluate.py [config] [stock] [model_name]")
 	exit()
 
-stock_name, model_name = sys.argv[1], sys.argv[2]
+config_file = sys.argv[1]
+stock_name = sys.argv[2]
+model_name = sys.argv[3]
+
+with open(config_file) as f:
+	yaml = YAML()
+	config = yaml.load(f)
 
 # Load agent
-model = load_model("models/" + model_name)
-window_size = model.layers[0].input.shape.as_list()[1] - 1
-agent = Agent(window_size, True, model_name)
+window_size = config["window_size"]
+agent = Agent(window_size, True, model_name,
+							result_dir=config["result_dir"])
 
 # Environment
-env = SimpleTradeEnv(stock_name, window_size, agent)
+env = SimpleTradeEnv(stock_name, window_size, agent,
+										 inventory_max=config["inventory_max"])
 
 # Initialization before starting an episode
 state = env.reset()
