@@ -38,14 +38,15 @@ ts_buy = []
 ts_sell = []
 
 while not done:
-	could_buy = len(agent.inventory) > 0
+	could_buy = len(agent.inventory) < config["inventory_max"]
+	could_sell = len(agent.inventory) > 0
 	action = agent.act(state)
 	next_state, _, done, _ = env.step(action)
 	state = next_state
 
-	if action == 1:
+	if action == 1 and could_buy:
 		ts_buy.append(t)
-	elif action == 2 and could_buy:
+	elif action == 2 and could_sell:
 		ts_sell.append(t)
 
 	t += 1
