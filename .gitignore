@@ -3,3 +3,5 @@ q-trader-env/*
 models/*
 __pycache__
 logs/*
+.env
+.mypy_cache
